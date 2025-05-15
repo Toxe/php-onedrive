@@ -1,0 +1,6 @@
+{
+    "name": "toxe/php_onedrive",
+    "require": {
+        "krizalys/onedrive-php-sdk": "^3.2"
+    }
+}
