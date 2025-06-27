@@ -1,6 +1,7 @@
 {
     "name": "toxe/php_onedrive",
     "require": {
-        "krizalys/onedrive-php-sdk": "^3.2"
+        "krizalys/onedrive-php-sdk": "^3.2",
+        "twig/twig": "^3.0"
     }
 }
