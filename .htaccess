@@ -1,11 +1,11 @@
 RewriteEngine On
 RewriteBase /
 
-# /static/* must not be rewritten any further
-RewriteRule ^static\/ - [L]
+# /public/* must not be rewritten any further
+RewriteRule ^public\/ - [L]
 
 # rewrite PHP files to index.php
 RewriteRule \.php$ index.php [L]
 
-# assume that the rest are static files
-RewriteRule ^(.+)$ /static/$1 [L]
+# assume that the rest are public files
+RewriteRule ^(.+)$ /public/$1 [L]

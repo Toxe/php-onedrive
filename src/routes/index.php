@@ -21,13 +21,21 @@ function generate(): string
         ]
     );
 
-    // Past this point, you can start using file/folder functions from the SDK, eg:
-    $file = $client->getRoot()->upload('hello.txt', 'Hello World!');
-    $content = $file->download();
-    $file->delete();
+    $rows = [];
+
+    foreach ($client->getRoot()->getChildren() as $item) {
+        $name = $item->name;
+
+        if ($item->folder)
+            $name .= sprintf("/ (%d Dateien)", $item->folder->childCount);
+        else if ($item->file)
+            $name .= sprintf(" (%d Bytes)", $item->size);
+
+        $rows[] = $name;
+    }
 
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return $content;
+    return implode("<br />\n", $rows);
 }

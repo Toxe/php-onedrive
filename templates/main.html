@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" />
     <title>OneDrive Access from PHP</title>
 </head>
 
@@ -13,9 +14,10 @@
         <a href="/login.php">/login</a><br />
         <a href="/logout.php">/logout</a>
     </p>
-    <p>
-        {{content}}
-    </p>
+
+    <div class="content">
+        {{content|raw}}
+    </div>
 </body>
 
 </html>
