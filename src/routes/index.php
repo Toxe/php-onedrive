@@ -21,21 +21,39 @@ function generate(): string
         ]
     );
 
-    $rows = [];
-
-    foreach ($client->getRoot()->getChildren() as $item) {
-        $name = $item->name;
-
-        if ($item->folder)
-            $name .= sprintf("/ (%d Dateien)", $item->folder->childCount);
-        else if ($item->file)
-            $name .= sprintf(" (%d Bytes)", $item->size);
-
-        $rows[] = $name;
-    }
+    $content = show_files($client);
 
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return implode("<br />\n", $rows);
+    return $content;
+}
+
+function show_files(Krizalys\Onedrive\Client $client): string
+{
+    $rows = [];
+
+    foreach ($client->getRoot()->getChildren() as $item) {
+        $row = [];
+        $row["name"] = $item->name;
+        $row["type"] = $item->folder ? "folder" : "file";
+        $row["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
+
+        if ($item->folder) {
+            $row["type"] = "folder";
+
+            $row["size"] = match ($item->folder->childCount) {
+                0 => "empty",
+                1 => "1 File",
+                default => $item->folder->childCount . " Files",
+            };
+        } else if ($item->file) {
+            $row["type"] = "file";
+            $row["size"] = $item->size . " Bytes";
+        }
+
+        $rows[] = $row;
+    }
+
+    return use_template("files", ["rows" => $rows]);
 }

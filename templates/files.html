@@ -1,0 +1,18 @@
+<table class="files">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Size</th>
+            <th scope="col">Modified</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.size }}</td>
+            <td>{{ row.modified }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
