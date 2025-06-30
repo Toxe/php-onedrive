@@ -8,4 +8,10 @@ $twig = new \Twig\Environment($loader, [
     'cache' => __DIR__ . '/cache',
 ]);
 
-echo $twig->render('main.html', ['content' => route()]);
+echo use_template('main', ['content' => route()]);
+
+function use_template(string $template, array $values = []): string
+{
+    global $twig;
+    return $twig->render("$template.html", $values);
+}
