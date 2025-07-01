@@ -14,5 +14,15 @@ function route(): string
 
     require(__DIR__ . "/routes/$route");
 
-    return generate();
+    $content = "";
+
+    try {
+        $content = generate();
+    }
+    catch (Exception $e) {
+        error_log($e->getMessage());
+        $content = use_template("error", ["message" => str_replace('\n', "\n", $e->getMessage())]);
+    }
+
+    return $content;
 }

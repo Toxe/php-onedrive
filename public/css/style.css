@@ -7,3 +7,7 @@
 table.files td {
     padding: 5px 15px 5px 15px;
 }
+
+p.message {
+    font-family: monospace;
+}
