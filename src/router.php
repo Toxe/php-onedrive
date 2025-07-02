@@ -2,13 +2,18 @@
 function route(): string
 {
     $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $path_prefix = get_path_prefix($parts["path"]);
 
-    $route = match ($parts["path"]) {
-        "/index.php", "/" => "index.php",
-        "/auth.php" => "auth.php",
-        "/login.php" => "login.php",
-        "/logout.php" => "logout.php",
+    $route = match ($path_prefix) {
+        "/", "/drive", "/index" => "index.php",
+        "/auth" => "auth.php",
+        "/login" => "login.php",
+        "/logout" => "logout.php",
+        default => null
     };
+
+    if (!$route)
+        return use_template("error", ["message" => "Unknown route: " . $parts["path"]]);
 
     error_log("==== $route");
 
@@ -25,4 +30,12 @@ function route(): string
     }
 
     return $content;
+}
+
+function get_path_prefix(string $path): string
+{
+    if (($pos = strpos($path, '/', 1)) === FALSE)
+        return $path;
+
+    return substr($path, 0, $pos);
 }

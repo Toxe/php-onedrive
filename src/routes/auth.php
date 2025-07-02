@@ -30,8 +30,8 @@ function generate(): string
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    // redirect to index.php
+    // redirect to /drive
     header('HTTP/1.1 302 Found', true, 302);
-    header("Location: /index.php");
+    header("Location: /drive");
     return "redirect";
 }

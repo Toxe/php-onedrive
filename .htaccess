@@ -7,5 +7,11 @@ RewriteRule ^public\/ - [L]
 # rewrite PHP files to index.php
 RewriteRule \.php$ index.php [L]
 
+# main routes
+RewriteRule ^(auth|drive|drive/.*|index|login|logout)$ index.php [L]
+
+# sub directories: /d/ or /d1/d2/
+RewriteRule /$ index.php [L]
+
 # assume that the rest are public files
 RewriteRule ^(.+)$ /public/$1 [L]

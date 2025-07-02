@@ -8,9 +8,9 @@ function generate(): string
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
     if (!array_key_exists('onedrive.client.state', $_SESSION)) {
-        // not logged in -> redirect to login.php
+        // not logged in -> redirect to /login
         header('HTTP/1.1 302 Found', true, 302);
-        header("Location: /login.php");
+        header("Location: /login");
         return "logging in...";
     }
 
