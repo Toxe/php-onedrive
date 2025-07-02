@@ -23,12 +23,12 @@ function generate(): string
     $path = get_drive_path($parts["path"]);
 
     $folder = open_folder($client, $path);
-    $content = show_files($folder, $path);
+    $files = collect_files($folder, $path);
 
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return $content;
+    return use_template("drive", ["files" => $files, "path" => $path]);
 }
 
 function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\Onedrive\Proxy\DriveItemProxy
@@ -39,35 +39,35 @@ function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\O
         return $client->getDriveItemByPath($path);
 }
 
-function show_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): string
+function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
 {
-    $rows = [];
+    $files = [];
 
     foreach ($folder->getChildren() as $item) {
-        $row = [];
-        $row["id"] = $item->id;
-        $row["url"] = build_item_url($item, $path);
-        $row["name"] = $item->name;
-        $row["type"] = $item->folder ? "folder" : "file";
-        $row["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
+        $file = [];
+        $file["id"] = $item->id;
+        $file["url"] = build_item_url($item, $path);
+        $file["name"] = $item->name;
+        $file["type"] = $item->folder ? "folder" : "file";
+        $file["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
 
         if ($item->folder) {
-            $row["type"] = "folder";
+            $file["type"] = "folder";
 
-            $row["size"] = match ($item->folder->childCount) {
+            $file["size"] = match ($item->folder->childCount) {
                 0 => "empty",
                 1 => "1 File",
                 default => $item->folder->childCount . " Files",
             };
         } else if ($item->file) {
-            $row["type"] = "file";
-            $row["size"] = $item->size . " Bytes";
+            $file["type"] = "file";
+            $file["size"] = $item->size . " Bytes";
         }
 
-        $rows[] = $row;
+        $files[] = $file;
     }
 
-    return use_template("drive", ["rows" => $rows, "path" => $path]);
+    return $files;
 }
 
 function build_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string

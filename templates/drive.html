@@ -11,11 +11,11 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in rows %}
+        {% for file in files %}
         <tr>
-            <td><a href="{{ row.url}}">{{ row.name }}</a></td>
-            <td>{{ row.size }}</td>
-            <td>{{ row.modified }}</td>
+            <td><a href="{{ file.url}}">{{ file.name }}</a></td>
+            <td>{{ file.size }}</td>
+            <td>{{ file.modified }}</td>
         </tr>
         {% endfor %}
     </tbody>
