@@ -67,7 +67,7 @@ function show_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path
         $rows[] = $row;
     }
 
-    return use_template("files", ["rows" => $rows, "path" => $path]);
+    return use_template("drive", ["rows" => $rows, "path" => $path]);
 }
 
 function build_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string
