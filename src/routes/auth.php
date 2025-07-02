@@ -1,6 +1,4 @@
 <?php
-use Krizalys\Onedrive\Onedrive;
-
 function generate(): string
 {
     session_start(["cookie_samesite" => "lax"]);
@@ -17,7 +15,7 @@ function generate(): string
     if (!array_key_exists('onedrive.client.state', $_SESSION))
         die('onedrive.client.state undefined in $_SESSION');
 
-    $client = Onedrive::client(
+    $client = Krizalys\Onedrive\Onedrive::client(
         $config['ONEDRIVE_CLIENT_ID'],
         [
             'state' => $_SESSION['onedrive.client.state'],  // Restore the previous state while instantiating this client to proceed in obtaining an access token.

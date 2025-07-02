@@ -1,3 +1,7 @@
+<p>
+    Path: {{ path }}
+</p>
+
 <table class="files">
     <thead>
         <tr>
@@ -9,7 +13,7 @@
     <tbody>
         {% for row in rows %}
         <tr>
-            <td>{{ row.name }}</td>
+            <td><a href="{{ row.url}}">{{ row.name }}</a></td>
             <td>{{ row.size }}</td>
             <td>{{ row.modified }}</td>
         </tr>

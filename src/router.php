@@ -5,7 +5,7 @@ function route(): string
     $path_prefix = get_path_prefix($parts["path"]);
 
     $route = match ($path_prefix) {
-        "/", "/drive", "/index" => "index.php",
+        "/", "/drive", "/index" => "drive.php",
         "/auth" => "auth.php",
         "/login" => "login.php",
         "/logout" => "logout.php",
