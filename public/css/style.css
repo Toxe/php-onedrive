@@ -1,5 +1,6 @@
 body {
     font-family: sans-serif;
+    font-size: 12pt;
 }
 
 .content {
@@ -8,12 +9,18 @@ body {
     margin: 10px;
 }
 
+table.files th,
 table.files td {
-    padding: 5px 15px 5px 15px;
+    padding: 0px 15px 0px 15px;
+    text-align: left;
 }
 
 table.files td img {
     height: 2em;
+}
+
+table.files td.modified {
+    font-family: monospace;
 }
 
 p.message {
