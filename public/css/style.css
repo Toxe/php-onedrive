@@ -1,3 +1,7 @@
+body {
+    font-family: sans-serif;
+}
+
 .content {
     border: 1px solid black;
     padding: 10px;
