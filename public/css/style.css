@@ -12,6 +12,10 @@ table.files td {
     padding: 5px 15px 5px 15px;
 }
 
+table.files td img {
+    height: 2em;
+}
+
 p.message {
     font-family: monospace;
 }

@@ -10,6 +10,7 @@
 <table class="files">
     <thead>
         <tr>
+            <th scope="col"></th>
             <th scope="col">Name</th>
             <th scope="col">Size</th>
             <th scope="col">Modified</th>
@@ -18,6 +19,7 @@
     <tbody>
         {% for file in files %}
         <tr>
+            <td><a href="{{ file.url}}"><img src="/img/{{ file.type }}.svg" /></a></td>
             <td><a href="{{ file.url}}">{{ file.name }}</a></td>
             <td>{{ file.size }}</td>
             <td>{{ file.modified }}</td>
