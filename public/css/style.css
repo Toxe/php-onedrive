@@ -15,8 +15,16 @@ table.files td {
     text-align: left;
 }
 
+table.files td.up {
+    font-size: 20pt;
+}
+
 table.files td img {
     height: 2em;
+}
+
+table.files td a {
+    text-decoration: none;
 }
 
 table.files td.modified {

@@ -74,12 +74,14 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
 function collect_breadcrumbs(string $path): array
 {
     if ($path === '/')
-        return [];
+        return [["name" => "Drive", "url" => "/drive"]];
+
+    $parts = explode('/', $path);
+    array_shift($parts);
 
     $url = "/drive";
     $breadcrumbs = [];
-    $parts = explode('/', $path);
-    array_shift($parts);
+    $breadcrumbs[] = ["name" => "Drive", "url" => $url];
 
     foreach ($parts as $name) {
         $url .= "/$name";

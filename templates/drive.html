@@ -1,7 +1,7 @@
 <ul class="breadcrumbs">
     <li><a href="/drive"><img src="/img/home.svg" /></a></li>
     <li><a href="/drive">Drive</a></li>
-    {% for bc in breadcrumbs %}
+    {% for bc in breadcrumbs[1:] %}
     <li><img src="/img/right_arrow.svg" /></li>
     <li><a href="{{ bc.url}}">{{ bc.name }}</a></li>
     {% endfor %}
@@ -17,10 +17,19 @@
         </tr>
     </thead>
     <tbody>
+        {% if breadcrumbs|length > 1 %}
+        {% set parent = breadcrumbs[-2:-1][0] %}
+        <tr>
+            <td><a href="{{ parent.url }}"><img src="/img/up_arrow.svg" /></a></td>
+            <td class="up"><a href="{{ parent.url }}">..</a></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% endif %}
         {% for file in files %}
         <tr>
-            <td><a href="{{ file.url}}"><img src="/img/{{ file.type }}.svg" /></a></td>
-            <td><a href="{{ file.url}}">{{ file.name }}</a></td>
+            <td><a href="{{ file.url }}"><img src="/img/{{ file.type }}.svg" /></a></td>
+            <td><a href="{{ file.url }}">{{ file.name }}</a></td>
             <td>{{ file.size }}</td>
             <td class="modified">{{ file.modified }}</td>
         </tr>
