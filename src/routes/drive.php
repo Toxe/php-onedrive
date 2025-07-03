@@ -24,11 +24,12 @@ function generate(): string
 
     $folder = open_folder($client, $path);
     $files = collect_files($folder, $path);
+    $breadcrumbs = collect_breadcrumbs($path);
 
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return use_template("drive", ["files" => $files, "path" => $path]);
+    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs]);
 }
 
 function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\Onedrive\Proxy\DriveItemProxy
@@ -68,6 +69,24 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
     }
 
     return $files;
+}
+
+function collect_breadcrumbs(string $path): array
+{
+    if ($path === '/')
+        return [];
+
+    $url = "/drive";
+    $breadcrumbs = [];
+    $parts = explode('/', $path);
+    array_shift($parts);
+
+    foreach ($parts as $name) {
+        $url .= "/$name";
+        $breadcrumbs[] = ["name" => $name, "url" => $url];
+    }
+
+    return $breadcrumbs;
 }
 
 function build_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string

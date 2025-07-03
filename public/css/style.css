@@ -15,3 +15,25 @@ table.files td {
 p.message {
     font-family: monospace;
 }
+
+ul.breadcrumbs {
+    list-style: none;
+    overflow: hidden;
+    padding: 0px;
+    margin-bottom: 2em;
+    height: 2em;
+    line-height: 2em;
+}
+
+ul.breadcrumbs li {
+    float: left;
+    padding: 0px 10px 0px 0px;
+}
+
+ul.breadcrumbs li a {
+    text-decoration: none;
+}
+
+ul.breadcrumbs li img {
+    height: 2em;
+}

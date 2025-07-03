@@ -1,6 +1,11 @@
-<p>
-    Path: {{ path }}
-</p>
+<ul class="breadcrumbs">
+    <li><a href="/drive"><img src="/img/home.svg" /></a></li>
+    <li><a href="/drive">Drive</a></li>
+    {% for bc in breadcrumbs %}
+    <li><img src="/img/right_arrow.svg" /></li>
+    <li><a href="{{ bc.url}}">{{ bc.name }}</a></li>
+    {% endfor %}
+</ul>
 
 <table class="files">
     <thead>
