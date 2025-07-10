@@ -19,6 +19,16 @@ function generate(): string
         ]
     );
 
+    // handle form requests
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        assert(isset($_POST["action"]));
+
+        $request_result = match ($_POST["action"]) {
+            "rename" => handle_rename_request($client),
+        };
+    }
+
+    // generate page content
     $parts = parse_url($_SERVER["REQUEST_URI"]);
     $path = get_drive_path($parts["path"]);
 
@@ -108,4 +118,15 @@ function get_drive_path(string $url_path): string
         $path = rtrim($path, '/');
 
     return $path === '' ? '/' : $path;
+}
+
+function handle_rename_request(Krizalys\Onedrive\Client $client): string
+{
+    if (!isset($_POST["new_name"]) || !isset($_POST["item_id"]))
+        return "request error";
+
+    $item = $client->getDriveItemById($_POST["item_id"]);
+    $item->rename($_POST["new_name"]);
+
+    return "done";
 }
