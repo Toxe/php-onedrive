@@ -51,6 +51,10 @@
     </tbody>
 </table>
 
+<div class="actions">
+    <button onclick="show_upload_dialog()">Upload</button>
+</div>
+
 <dialog id="rename_dialog">
     <form method="post">
         <p>Please enter the new name.</p>
@@ -72,11 +76,23 @@
         </p>
         <p name="folder">
             Are you sure you want to delete the folder <span class="item_name"></span>?<br />
-            This will also delete all files and subfolders!</p>
+            This will also delete all files and subfolders!
+        </p>
         <div>
             <button type="submit" name="action" value="delete">Yes, delete it</button>
             <button value="cancel" formmethod="dialog">No, don't delete it</button>
             <input type="hidden" name="item_id" />
+        </div>
+    </form>
+</dialog>
+
+<dialog id="upload_dialog">
+    <form method="post" enctype="multipart/form-data">
+        <p>Please choose the file you whish to upload.</p>
+        <p><input type="file" name="file" /></p>
+        <div>
+            <button type="submit" name="action" value="upload">Upload</button>
+            <button value="cancel" formmethod="dialog">Cancel</button>
         </div>
     </form>
 </dialog>

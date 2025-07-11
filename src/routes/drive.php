@@ -17,6 +17,10 @@ function generate(): string
         ]
     );
 
+    $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $path = get_drive_path($parts["path"]);
+    $folder = open_folder($client, $path);
+
     // handle form requests
     $request_result = null;
 
@@ -26,14 +30,11 @@ function generate(): string
         $request_result = match ($_POST["action"]) {
             "rename" => handle_rename_request($client),
             "delete" => handle_delete_request($client),
+            "upload" => handle_upload_request($folder),
         };
     }
 
     // generate page content
-    $parts = parse_url($_SERVER["REQUEST_URI"]);
-    $path = get_drive_path($parts["path"]);
-
-    $folder = open_folder($client, $path);
     $files = collect_files($folder, $path);
     $breadcrumbs = collect_breadcrumbs($path);
 
@@ -152,4 +153,17 @@ function handle_delete_request(Krizalys\Onedrive\Client $client): string
         "file" => "File deleted.",
         "folder" => "Folder deleted.",
     };
+}
+
+function handle_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+{
+    if (!isset($_FILES["file"]))
+        return "request error";
+
+    if (($content = file_get_contents($_FILES["file"]["tmp_name"])) === false)
+        return "request error";
+
+    $folder->upload($_FILES["file"]["name"], $content);
+
+    return "File uploaded.";
 }

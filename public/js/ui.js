@@ -25,3 +25,11 @@ function show_delete_dialog(item_id, item_name, item_type) {
 
     dialog.showModal();
 }
+
+function show_upload_dialog() {
+    const dialog = document.getElementById("upload_dialog");
+    const form = dialog.querySelector("form");
+
+    form.reset();
+    dialog.showModal();
+}
