@@ -3,6 +3,26 @@ body {
     font-size: 12pt;
 }
 
+a {
+    text-decoration: none;
+}
+
+.header {
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px 10px 20px 10px;
+}
+
+.header span {
+    margin-right: 20px;
+}
+
+.header img {
+    vertical-align: middle;
+    height: 2em;
+    margin-right: 5px;
+}
+
 .content {
     border: 1px solid black;
     padding: 10px;
@@ -21,10 +41,6 @@ table.files td.up {
 
 table.files td img {
     height: 2em;
-}
-
-table.files td a {
-    text-decoration: none;
 }
 
 table.files td.modified {
@@ -47,10 +63,6 @@ ul.breadcrumbs {
 ul.breadcrumbs li {
     float: left;
     padding: 0px 10px 0px 0px;
-}
-
-ul.breadcrumbs li a {
-    text-decoration: none;
 }
 
 ul.breadcrumbs li img {

@@ -10,12 +10,11 @@
 </head>
 
 <body>
-    <p>
-        <a href="/">/</a><br />
-        <a href="/drive">/drive</a><br />
-        <a href="/login">/login</a><br />
-        <a href="/logout">/logout</a>
-    </p>
+    <div class="header">
+        <span><a href="/drive"><img src="/img/home.svg" />Home</a></span>
+        <span><a href="/login"><img src="/img/login.svg" />Login</a></span>
+        <span><a href="/logout"><img src="/img/logout.svg" />Logout</a></span>
+    </div>
 
     <div class="content">
         {{content|raw}}
