@@ -10,14 +10,10 @@
 </head>
 
 <body>
-    <div class="header">
-        <span><a href="/drive"><img src="/img/home.svg" />Home</a></span>
-        <span><a href="/login"><img src="/img/login.svg" />Login</a></span>
-        <span><a href="/logout"><img src="/img/logout.svg" />Logout</a></span>
-    </div>
+    {{ header|raw }}
 
     <div class="content">
-        {{content|raw}}
+        {{ content|raw }}
     </div>
 </body>
 
