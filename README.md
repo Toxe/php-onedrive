@@ -4,6 +4,7 @@
 
 1. Copy `config.php.dist` to `config.php`.
 2. Edit app credentials in `config.php`.
+3. Make sure the `./cache` directory is writable by the web server.
 3. Use [Composer](https://getcomposer.org) to install dependencies: `$ php bin/composer.phar install`
 
 ## Dependencies
