@@ -23,6 +23,7 @@ function generate(): string
 
         $request_result = match ($_POST["action"]) {
             "rename" => handle_rename_request($client),
+            "delete" => handle_delete_request($client),
         };
     }
 
@@ -93,7 +94,7 @@ function collect_breadcrumbs(string $path): array
 
     foreach ($parts as $name) {
         $url .= "/$name";
-        $breadcrumbs[] = ["name" => $name, "url" => $url];
+        $breadcrumbs[] = ["name" => urldecode($name), "url" => $url];
     }
 
     return $breadcrumbs;
@@ -125,6 +126,17 @@ function handle_rename_request(Krizalys\Onedrive\Client $client): string
 
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->rename($_POST["new_name"]);
+
+    return "done";
+}
+
+function handle_delete_request(Krizalys\Onedrive\Client $client): string
+{
+    if (!isset($_POST["item_id"]))
+        return "request error";
+
+    $item = $client->getDriveItemById($_POST["item_id"]);
+    $item->delete();
 
     return "done";
 }

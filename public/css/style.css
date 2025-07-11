@@ -68,3 +68,12 @@ ul.breadcrumbs li {
 ul.breadcrumbs li img {
     height: 2em;
 }
+
+.hidden {
+    display: none;
+}
+
+dialog .item_name {
+    font-style: italic;
+    color: blue;
+}
