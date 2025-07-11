@@ -18,6 +18,8 @@ function generate(): string
     );
 
     // handle form requests
+    $request_result = null;
+
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         assert(isset($_POST["action"]));
 
@@ -38,7 +40,7 @@ function generate(): string
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs]);
+    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_result" => $request_result]);
 }
 
 function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\Onedrive\Proxy\DriveItemProxy
@@ -47,6 +49,11 @@ function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\O
         return $client->getRoot();
     else
         return $client->getDriveItemByPath($path);
+}
+
+function get_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
+{
+    return $item->folder ? "folder" : "file";
 }
 
 function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
@@ -58,7 +65,7 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
         $file["id"] = $item->id;
         $file["url"] = build_item_url($item, $path);
         $file["name"] = $item->name;
-        $file["type"] = $item->folder ? "folder" : "file";
+        $file["type"] = get_item_type($item);
         $file["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
 
         if ($item->folder) {
@@ -127,7 +134,10 @@ function handle_rename_request(Krizalys\Onedrive\Client $client): string
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->rename($_POST["new_name"]);
 
-    return "done";
+    return match (get_item_type($item)) {
+        "file" => "File renamed.",
+        "folder" => "Folder renamed.",
+    };
 }
 
 function handle_delete_request(Krizalys\Onedrive\Client $client): string
@@ -138,5 +148,8 @@ function handle_delete_request(Krizalys\Onedrive\Client $client): string
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->delete();
 
-    return "done";
+    return match (get_item_type($item)) {
+        "file" => "File deleted.",
+        "folder" => "Folder deleted.",
+    };
 }

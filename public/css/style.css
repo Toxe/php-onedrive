@@ -29,6 +29,13 @@ a {
     margin: 10px;
 }
 
+.request_result {
+    border: 2px solid #1cb41c;
+    background-color: #a7ff21;
+    padding: 10px;
+    margin: 10px;
+}
+
 table.files th,
 table.files td {
     padding: 0px 15px 0px 15px;
