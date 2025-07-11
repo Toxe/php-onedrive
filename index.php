@@ -7,6 +7,7 @@ $twig = new \Twig\Environment($loader, [
     'debug' => true,
     'cache' => __DIR__ . '/cache',
 ]);
+$twig->addExtension(new \Twig\Extension\DebugExtension());
 
 echo use_template('main', ['content' => route()]);
 
