@@ -3,8 +3,6 @@ use Krizalys\Onedrive\Onedrive;
 
 function generate(): string
 {
-    session_start(["cookie_samesite" => "lax"]);
-
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
     $client = Onedrive::client($config['ONEDRIVE_CLIENT_ID']);

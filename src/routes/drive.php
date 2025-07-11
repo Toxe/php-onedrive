@@ -1,8 +1,6 @@
 <?php
 function generate(): string
 {
-    session_start(["cookie_samesite" => "lax"]);
-
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
     if (!array_key_exists('onedrive.client.state', $_SESSION)) {

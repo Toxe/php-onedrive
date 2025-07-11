@@ -9,7 +9,9 @@ $twig = new \Twig\Environment($loader, [
 ]);
 $twig->addExtension(new \Twig\Extension\DebugExtension());
 
-echo use_template('main', ['header' => generate_header(), 'content' => route()]);
+session_start(["cookie_samesite" => "lax"]);
+
+echo use_template('main', ['content' => route(), 'header' => generate_header()]);
 
 
 function use_template(string $template, array $values = []): string

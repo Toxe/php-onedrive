@@ -1,8 +1,6 @@
 <?php
 function generate(): string
 {
-    session_start(["cookie_samesite" => "lax"]);
-
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
     // If we don't have a code in the query string (meaning that the user did not
