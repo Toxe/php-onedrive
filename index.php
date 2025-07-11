@@ -22,5 +22,6 @@ function use_template(string $template, array $values = []): string
 
 function generate_header(): string
 {
-    return use_template('header');
+    $logged_in = array_key_exists('onedrive.client.state', $_SESSION);
+    return use_template('header', ['logged_in' => $logged_in]);
 }
