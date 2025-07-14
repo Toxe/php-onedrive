@@ -33,3 +33,11 @@ function show_upload_dialog() {
     form.reset();
     dialog.showModal();
 }
+
+function show_new_folder_dialog() {
+    const dialog = document.getElementById("new_folder_dialog");
+    const form = dialog.querySelector("form");
+
+    form.reset();
+    dialog.showModal();
+}

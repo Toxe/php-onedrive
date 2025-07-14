@@ -53,6 +53,7 @@
 
 <div class="actions">
     <button onclick="show_upload_dialog()">Upload</button>
+    <button onclick="show_new_folder_dialog()">New Folder</button>
 </div>
 
 <dialog id="rename_dialog">
@@ -92,6 +93,19 @@
         <p><input type="file" name="file" /></p>
         <div>
             <button type="submit" name="action" value="upload">Upload</button>
+            <button value="cancel" formmethod="dialog">Cancel</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="new_folder_dialog">
+    <form method="post">
+        <p>Please enter the name of the new folder.</p>
+        <p>
+            <input type="text" name="folder_name" size="40" autofocus />
+        </p>
+        <div>
+            <button type="submit" name="action" value="new_folder">Submit</button>
             <button value="cancel" formmethod="dialog">Cancel</button>
         </div>
     </form>

@@ -31,6 +31,7 @@ function generate(): string
             "rename" => handle_rename_request($client),
             "delete" => handle_delete_request($client),
             "upload" => handle_upload_request($folder),
+            "new_folder" => handle_new_folder_request($folder),
         };
     }
 
@@ -166,4 +167,14 @@ function handle_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): 
     $folder->upload($_FILES["file"]["name"], $content);
 
     return "File uploaded.";
+}
+
+function handle_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+{
+    if (!isset($_POST["folder_name"]))
+        return "request error";
+
+    $folder->createFolder($_POST["folder_name"]);
+
+    return "Folder created.";
 }
