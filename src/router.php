@@ -15,8 +15,6 @@ function route(): string
     if (!$route)
         return use_template("error", ["message" => "Unknown route: " . $parts["path"]]);
 
-    error_log("==== $route");
-
     require(__DIR__ . "/routes/$route");
 
     $content = "";
