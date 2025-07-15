@@ -1,4 +1,6 @@
 <?php
+require(__DIR__ . "/../onedrive.php");
+
 function generate(): string
 {
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
@@ -19,7 +21,7 @@ function generate(): string
 
     $parts = parse_url($_SERVER["REQUEST_URI"]);
     $path = get_drive_path($parts["path"]);
-    $folder = open_folder($client, $path);
+    $folder = get_drive_item($client, $path);
 
     // handle form requests
     $request_result = null;
@@ -45,19 +47,6 @@ function generate(): string
     return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_result" => $request_result]);
 }
 
-function open_folder(Krizalys\Onedrive\Client $client, string $path): Krizalys\Onedrive\Proxy\DriveItemProxy
-{
-    if ($path === '/')
-        return $client->getRoot();
-    else
-        return $client->getDriveItemByPath($path);
-}
-
-function get_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
-{
-    return $item->folder ? "folder" : "file";
-}
-
 function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
 {
     $files = [];
@@ -65,9 +54,9 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
     foreach ($folder->getChildren() as $item) {
         $file = [];
         $file["id"] = $item->id;
-        $file["url"] = build_item_url($item, $path);
+        $file["url"] = build_drive_item_url($item, $path);
         $file["name"] = $item->name;
-        $file["type"] = get_item_type($item);
+        $file["type"] = get_drive_item_type($item);
         $file["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
 
         if ($item->folder) {
@@ -109,12 +98,6 @@ function collect_breadcrumbs(string $path): array
     return $breadcrumbs;
 }
 
-function build_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string
-{
-    $slash = $path === '/' ? '' : '/';
-    return "/drive{$path}{$slash}{$item->name}";
-}
-
 function get_drive_path(string $url_path): string
 {
     if (!str_starts_with($url_path, "/drive"))
@@ -136,7 +119,7 @@ function handle_rename_request(Krizalys\Onedrive\Client $client): string
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->rename($_POST["new_name"]);
 
-    return match (get_item_type($item)) {
+    return match (get_drive_item_type($item)) {
         "file" => "File renamed.",
         "folder" => "Folder renamed.",
     };
@@ -150,7 +133,7 @@ function handle_delete_request(Krizalys\Onedrive\Client $client): string
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->delete();
 
-    return match (get_item_type($item)) {
+    return match (get_drive_item_type($item)) {
         "file" => "File deleted.",
         "folder" => "Folder deleted.",
     };
