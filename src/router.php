@@ -1,10 +1,10 @@
 <?php
-require_once(__DIR__ . "/template.php");
+require_once(__DIR__ . '/request_result.php');
 
-function route(): string
+function route(): RequestResult
 {
     $parts = parse_url($_SERVER["REQUEST_URI"]);
-    $path_prefix = get_path_prefix($parts["path"]);
+    $path_prefix = get_route_path_prefix($parts["path"]);
 
     $route = match ($path_prefix) {
         "/", "/drive", "/index" => "drive.php",
@@ -15,26 +15,22 @@ function route(): string
     };
 
     if (!$route)
-        return use_template("error", ["message" => "Unknown route: " . $parts["path"]]);
+        return Content::error("Unknown route: " . $parts["path"])->result();
 
     require(__DIR__ . "/routes/$route");
 
-    $content = "";
-
     try {
-        $content = generate();
+        return handle_route();
     }
     catch (Exception $e) {
         error_log($e->getMessage());
-        $content = use_template("error", ["message" => str_replace('\n', "\n", $e->getMessage())]);
+        return Content::error(str_replace("\\n", "\n", $e->getMessage()))->result();
     }
-
-    return $content;
 }
 
-function get_path_prefix(string $path): string
+function get_route_path_prefix(string $path): string
 {
-    if (($pos = strpos($path, '/', 1)) === FALSE)
+    if (($pos = strpos($path, '/', 1)) === false)
         return $path;
 
     return substr($path, 0, $pos);

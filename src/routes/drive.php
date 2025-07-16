@@ -1,17 +1,14 @@
 <?php
-require(__DIR__ . "/../onedrive.php");
-require_once(__DIR__ . '/../template.php');
+require_once(__DIR__ . "/../onedrive.php");
+require_once(__DIR__ . "/../template.php");
 
-function generate(): string
+function handle_route(): RequestResult
 {
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
-    if (!array_key_exists('onedrive.client.state', $_SESSION)) {
-        // not logged in -> redirect to /login
-        header('HTTP/1.1 302 Found', true, 302);
-        header("Location: /login");
-        return "logging in...";
-    }
+    // not logged in -> redirect to /login
+    if (!array_key_exists('onedrive.client.state', $_SESSION))
+        return RequestResult::redirect("/login");
 
     $client = Krizalys\Onedrive\Onedrive::client(
         $config['ONEDRIVE_CLIENT_ID'],
@@ -45,7 +42,8 @@ function generate(): string
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
+    $content = use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
+    return Content::success($content)->result();
 }
 
 function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array

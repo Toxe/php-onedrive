@@ -1,5 +1,5 @@
 <?php
-function generate(): string
+function handle_route(): RequestResult
 {
     $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
@@ -27,7 +27,5 @@ function generate(): string
     $_SESSION['onedrive.client.state'] = $client->getState();
 
     // redirect to /drive
-    header('HTTP/1.1 302 Found', true, 302);
-    header("Location: /drive");
-    return "redirect";
+    return RequestResult::redirect("/drive");
 }

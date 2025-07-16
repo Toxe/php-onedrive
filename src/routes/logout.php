@@ -1,8 +1,8 @@
 <?php
-function generate(): string
+function handle_route(): RequestResult
 {
     session_unset();
     session_destroy();
 
-    return "logged out";
+    return Content::success("Logged out.")->result();
 }
