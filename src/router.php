@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__ . "/template.php");
+
 function route(): string
 {
     $parts = parse_url($_SERVER["REQUEST_URI"]);

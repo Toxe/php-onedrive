@@ -1,5 +1,6 @@
 <?php
 require(__DIR__ . "/../onedrive.php");
+require_once(__DIR__ . '/../template.php');
 
 function generate(): string
 {
