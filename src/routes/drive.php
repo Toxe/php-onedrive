@@ -42,7 +42,7 @@ function handle_route(): RequestResult
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    $content = use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
+    $content = use_template("routes/drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
     return Content::success($content)->result();
 }
 
