@@ -24,12 +24,12 @@ function generate(): string
     $folder = get_drive_item($client, $path);
 
     // handle form requests
-    $request_result = null;
+    $request_feedback = null;
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         assert(isset($_POST["action"]));
 
-        $request_result = match ($_POST["action"]) {
+        $request_feedback = match ($_POST["action"]) {
             "rename" => handle_rename_request($client),
             "delete" => handle_delete_request($client),
             "upload" => handle_upload_request($folder),
@@ -44,7 +44,7 @@ function generate(): string
     // Persist the OneDrive client' state for next API requests.
     $_SESSION['onedrive.client.state'] = $client->getState();
 
-    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_result" => $request_result]);
+    return use_template("drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
 }
 
 function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
