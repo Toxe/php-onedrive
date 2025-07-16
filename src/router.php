@@ -8,6 +8,7 @@ function route(): RequestResult
 
     $route = match ($path_prefix) {
         "/", "/drive", "/index" => "drive.php",
+        "/download" => "download.php",
         "/auth" => "auth.php",
         "/login" => "login.php",
         "/logout" => "logout.php",

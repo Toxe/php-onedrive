@@ -8,7 +8,7 @@ RewriteRule ^public\/ - [L]
 RewriteRule \.php$ index.php [L]
 
 # main routes
-RewriteRule ^(auth|drive|drive/.*|index|login|logout)$ index.php [L]
+RewriteRule ^(auth|drive|drive/.*|download/.+|index|login|logout)$ index.php [L]
 
 # sub directories: /d/ or /d1/d2/
 RewriteRule /$ index.php [L]
