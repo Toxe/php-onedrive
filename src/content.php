@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/request_result.php');
+require_once(__DIR__ . '/onedrive.php');
 
 class Content
 {
@@ -43,6 +44,5 @@ class Content
 
 function generate_header(): string
 {
-    $logged_in = array_key_exists('onedrive.client.state', $_SESSION);
-    return use_template('header', ['logged_in' => $logged_in]);
+    return use_template('header', ['logged_in' => is_logged_in_to_onedrive()]);
 }

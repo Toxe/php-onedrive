@@ -1,8 +1,7 @@
 <?php
 function handle_route(): RequestResult
 {
-    session_unset();
-    session_destroy();
+    destroy_session();
 
     return Content::success("Logged out.")->result();
 }
