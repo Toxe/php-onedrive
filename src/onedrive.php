@@ -2,7 +2,7 @@
 // Initialize a new OneDrive client.
 function init_onedrive_client(): array
 {
-    $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+    $config = load_config();
 
     $client = Krizalys\Onedrive\Onedrive::client($config['ONEDRIVE_CLIENT_ID']);
     $login_url = $client->getLogInUrl([
@@ -19,7 +19,7 @@ function init_onedrive_client(): array
 // Obtain the access token using the code received by the OneDrive API.
 function obtain_onedrive_access_token(Krizalys\Onedrive\Client $client, string $code): void
 {
-    $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+    $config = load_config();
 
     $client->obtainAccessToken($config['ONEDRIVE_CLIENT_SECRET'], $_GET['code']);
 }
@@ -37,7 +37,7 @@ function restore_onedrive_client_from_session(): ?Krizalys\Onedrive\Client
 {
     assert(session_id());
 
-    $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+    $config = load_config();
 
     if (!array_key_exists('onedrive.client.state', $_SESSION))
         return null;  // not logged-in -> should redirect to /login
