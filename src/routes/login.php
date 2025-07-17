@@ -1,22 +1,10 @@
 <?php
-use Krizalys\Onedrive\Onedrive;
+require_once(__DIR__ . "/../onedrive.php");
 
 function handle_route(): RequestResult
 {
-    $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+    [$client, $login_url] = init_onedrive_client();
+    save_onedrive_client_state_to_session($client);
 
-    $client = Onedrive::client($config['ONEDRIVE_CLIENT_ID']);
-    $url = $client->getLogInUrl([
-        'files.read',
-        'files.read.all',
-        'files.readwrite',
-        'files.readwrite.all',
-        'offline_access',
-    ], $config['ONEDRIVE_REDIRECT_URI']);
-
-    // Persist the OneDrive client' state for next API requests.
-    $_SESSION['onedrive.client.state'] = $client->getState();
-
-    // redirect to login URL
-    return RequestResult::redirect($url);
+    return RequestResult::redirect($login_url);  // redirect to login URL
 }

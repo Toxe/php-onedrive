@@ -4,18 +4,8 @@ require_once(__DIR__ . "/../template.php");
 
 function handle_route(): RequestResult
 {
-    $config = require($_SERVER['DOCUMENT_ROOT'] . '/config.php');
-
-    // not logged in -> redirect to /login
-    if (!array_key_exists('onedrive.client.state', $_SESSION))
+    if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");
-
-    $client = Krizalys\Onedrive\Onedrive::client(
-        $config['ONEDRIVE_CLIENT_ID'],
-        [
-            'state' => $_SESSION['onedrive.client.state'],  // Restore the previous state while instantiating this client to proceed in obtaining an access token.
-        ]
-    );
 
     $parts = parse_url($_SERVER["REQUEST_URI"]);
     $path = get_drive_path($parts["path"]);
@@ -39,8 +29,7 @@ function handle_route(): RequestResult
     $files = collect_files($folder, $path);
     $breadcrumbs = collect_breadcrumbs($path);
 
-    // Persist the OneDrive client' state for next API requests.
-    $_SESSION['onedrive.client.state'] = $client->getState();
+    save_onedrive_client_state_to_session($client);
 
     $content = use_template("routes/drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
     return Content::success($content)->result();
