@@ -1,7 +1,5 @@
 <?php
 require(__DIR__ . '/vendor/autoload.php');
-require(__DIR__ . '/src/router.php');
+require(__DIR__ . '/src/main.php');
 
-session_start(["cookie_samesite" => "lax"]);
-
-route()->output();
+main();
