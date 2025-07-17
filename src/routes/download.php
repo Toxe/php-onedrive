@@ -11,7 +11,7 @@ function handle_route(): RequestResult
     $item = get_drive_item($client, $file_path);
 
     if (get_drive_item_type($item) !== "file")
-        return Content::error("error, not a file")->result();
+        return Content::error("Unable to download, \"$file_path\" is not a file.")->result();
 
     $file_content = $item->download()->getContents();
 
