@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . "/../onedrive.php");
 
-function handle_route(): RequestResult
+function handle_GET_request(): RequestResult
 {
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");

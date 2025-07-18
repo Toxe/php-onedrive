@@ -2,7 +2,26 @@
 require_once(__DIR__ . "/../onedrive.php");
 require_once(__DIR__ . "/../template.php");
 
-function handle_route(): RequestResult
+function handle_GET_request(): RequestResult
+{
+    if (!($client = restore_onedrive_client_from_session()))
+        return RequestResult::redirect("/login");
+
+    $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $path = get_drive_path($parts["path"]);
+    $folder = get_drive_item($client, $path);
+
+    // generate page content
+    $files = collect_files($folder, $path);
+    $breadcrumbs = collect_breadcrumbs($path);
+
+    save_onedrive_client_state_to_session($client);
+
+    $content = use_template("routes/drive", ["files" => $files, "breadcrumbs" => $breadcrumbs]);
+    return Content::success($content)->result();
+}
+
+function handle_POST_request(): RequestResult
 {
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");

@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . "/../onedrive.php");
 
-function handle_route(): RequestResult
+function handle_GET_request(): RequestResult
 {
     // If we don't have a code in the query string (meaning that the user did not log in successfully
     // or did not grant privileges requested), we cannot proceed in obtaining an access token.

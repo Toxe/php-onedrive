@@ -1,5 +1,5 @@
 <?php
-function handle_route(): RequestResult
+function handle_GET_request(): RequestResult
 {
     destroy_session();
 
