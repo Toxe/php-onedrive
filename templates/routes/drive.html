@@ -1,6 +1,8 @@
 {% if request_feedback %}
-<div class="request_feedback">
-    {{ request_feedback }}
+{% set success = request_feedback[0] ? "success" : "failure" %}
+{% set message = request_feedback[1] %}
+<div class="request_feedback {{ success }}">
+    {{ message }}
 </div>
 {% endif %}
 

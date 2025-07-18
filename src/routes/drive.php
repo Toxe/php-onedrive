@@ -41,7 +41,7 @@ function start_request_handling(Krizalys\Onedrive\Client $client): array
     return [$path, $folder];
 }
 
-function finish_request_handling(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path, ?string $request_feedback = null): Content
+function finish_request_handling(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path, ?array $request_feedback = null): Content
 {
     $files = collect_files($folder, $path);
     $breadcrumbs = collect_breadcrumbs($path);
@@ -121,53 +121,57 @@ function get_drive_path(string $url_path): string
     return $path === '' ? '/' : $path;
 }
 
-function handle_POST_rename_request(Krizalys\Onedrive\Client $client): string
+function handle_POST_rename_request(Krizalys\Onedrive\Client $client): array
 {
     if (!isset($_POST["new_name"]) || !isset($_POST["item_id"]))
-        return "request error";
+        return [false, "Request error."];
 
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->rename($_POST["new_name"]);
 
-    return match (get_drive_item_type($item)) {
+    $msg = match (get_drive_item_type($item)) {
         "file" => "File renamed.",
         "folder" => "Folder renamed.",
     };
+
+    return [true, $msg];
 }
 
-function handle_POST_delete_request(Krizalys\Onedrive\Client $client): string
+function handle_POST_delete_request(Krizalys\Onedrive\Client $client): array
 {
     if (!isset($_POST["item_id"]))
-        return "request error";
+        return [false, "Request error."];
 
     $item = $client->getDriveItemById($_POST["item_id"]);
     $item->delete();
 
-    return match (get_drive_item_type($item)) {
+    $msg = match (get_drive_item_type($item)) {
         "file" => "File deleted.",
         "folder" => "Folder deleted.",
     };
+
+    return [true, $msg];
 }
 
-function handle_POST_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+function handle_POST_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
     if (!isset($_FILES["file"]))
-        return "request error";
+        return [false, "Request error."];
 
     if (($content = file_get_contents($_FILES["file"]["tmp_name"])) === false)
-        return "request error";
+        return [false, "Request error."];
 
     $folder->upload($_FILES["file"]["name"], $content);
 
-    return "File uploaded.";
+    return [true, "File uploaded."];
 }
 
-function handle_POST_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+function handle_POST_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
     if (!isset($_POST["folder_name"]))
-        return "request error";
+        return [false, "Request error."];
 
     $folder->createFolder($_POST["folder_name"]);
 
-    return "Folder created.";
+    return [true, "Folder created."];
 }
