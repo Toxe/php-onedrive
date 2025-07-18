@@ -7,51 +7,54 @@ function handle_GET_request(): RequestResult
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");
 
-    $parts = parse_url($_SERVER["REQUEST_URI"]);
-    $path = get_drive_path($parts["path"]);
-    $folder = get_drive_item($client, $path);
+    [$path, $folder] = start_request_handling($client);
 
-    // generate page content
-    $files = collect_files($folder, $path);
-    $breadcrumbs = collect_breadcrumbs($path);
-
-    save_onedrive_client_state_to_session($client);
-
-    $content = use_template("routes/drive", ["files" => $files, "breadcrumbs" => $breadcrumbs]);
-    return Content::success($content)->result();
+    return finish_request_handling($client, $folder, $path)->result();
 }
 
 function handle_POST_request(): RequestResult
 {
+    assert(isset($_POST["action"]));
+
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");
 
+    [$path, $folder] = start_request_handling($client);
+
+    // handle form request
+    $request_feedback = match ($_POST["action"]) {
+        "rename" => handle_POST_rename_request($client),
+        "delete" => handle_POST_delete_request($client),
+        "upload" => handle_POST_upload_request($folder),
+        "new_folder" => handle_POST_new_folder_request($folder),
+    };
+
+    return finish_request_handling($client, $folder, $path, $request_feedback)->result();
+}
+
+function start_request_handling(Krizalys\Onedrive\Client $client): array
+{
     $parts = parse_url($_SERVER["REQUEST_URI"]);
     $path = get_drive_path($parts["path"]);
     $folder = get_drive_item($client, $path);
 
-    // handle form requests
-    $request_feedback = null;
+    return [$path, $folder];
+}
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        assert(isset($_POST["action"]));
-
-        $request_feedback = match ($_POST["action"]) {
-            "rename" => handle_rename_request($client),
-            "delete" => handle_delete_request($client),
-            "upload" => handle_upload_request($folder),
-            "new_folder" => handle_new_folder_request($folder),
-        };
-    }
-
-    // generate page content
+function finish_request_handling(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path, ?string $request_feedback = null): Content
+{
     $files = collect_files($folder, $path);
     $breadcrumbs = collect_breadcrumbs($path);
 
     save_onedrive_client_state_to_session($client);
 
-    $content = use_template("routes/drive", ["files" => $files, "breadcrumbs" => $breadcrumbs, "request_feedback" => $request_feedback]);
-    return Content::success($content)->result();
+    return Content::success(
+        use_template("routes/drive", [
+            "files" => $files,
+            "breadcrumbs" => $breadcrumbs,
+            "request_feedback" => $request_feedback,
+        ])
+    );
 }
 
 function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
@@ -118,7 +121,7 @@ function get_drive_path(string $url_path): string
     return $path === '' ? '/' : $path;
 }
 
-function handle_rename_request(Krizalys\Onedrive\Client $client): string
+function handle_POST_rename_request(Krizalys\Onedrive\Client $client): string
 {
     if (!isset($_POST["new_name"]) || !isset($_POST["item_id"]))
         return "request error";
@@ -132,7 +135,7 @@ function handle_rename_request(Krizalys\Onedrive\Client $client): string
     };
 }
 
-function handle_delete_request(Krizalys\Onedrive\Client $client): string
+function handle_POST_delete_request(Krizalys\Onedrive\Client $client): string
 {
     if (!isset($_POST["item_id"]))
         return "request error";
@@ -146,7 +149,7 @@ function handle_delete_request(Krizalys\Onedrive\Client $client): string
     };
 }
 
-function handle_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+function handle_POST_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
 {
     if (!isset($_FILES["file"]))
         return "request error";
@@ -159,7 +162,7 @@ function handle_upload_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): 
     return "File uploaded.";
 }
 
-function handle_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
+function handle_POST_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): string
 {
     if (!isset($_POST["folder_name"]))
         return "request error";
