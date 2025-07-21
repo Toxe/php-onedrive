@@ -79,10 +79,6 @@ table.files td img {
     height: 2em;
 }
 
-table.files td.modified {
-    font-family: monospace;
-}
-
 ul.breadcrumbs {
     list-style: none;
     overflow: hidden;

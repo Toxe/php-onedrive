@@ -67,6 +67,7 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
         $file["url"] = build_drive_item_url($item, $path);
         $file["name"] = $item->name;
         $file["type"] = get_drive_item_type($item);
+        $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
         $file["modified_by"] = $item->lastModifiedBy->user->displayName;
 
         if ($item->folder) {
@@ -79,7 +80,7 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
             };
         } else if ($item->file) {
             $file["type"] = "file";
-            $file["size"] = $item->size . " Bytes";
+            $file["size"] = format_size($item->size);
         }
 
         $files[] = $file;
@@ -174,4 +175,20 @@ function handle_POST_new_folder_request(Krizalys\Onedrive\Proxy\DriveItemProxy $
     $folder->createFolder($_POST["folder_name"]);
 
     return [true, "Folder created."];
+}
+
+function format_datetime(DateTime $dt): string
+{
+    return $dt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i T');
+}
+
+function format_size(int $size): string
+{
+    $suffixes = [' Bytes', ' KB', ' MB', ' GB', ' TB', ' PB'];
+
+    if ($size == 0)
+        return '0 Bytes';
+
+    $e = (int) floor(log($size, 1024));
+    return round($size / pow(1024, $e), 2) . $suffixes[$e];
 }
