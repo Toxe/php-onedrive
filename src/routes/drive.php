@@ -62,19 +62,20 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
     $files = [];
 
     foreach ($folder->getChildren() as $item) {
+        $file_type = get_drive_item_type($item);
+
         $file = [];
         $file["id"] = $item->id;
         $file["url"] = build_drive_item_url($item, $path);
         $file["name"] = $item->name;
-        $file["type"] = get_drive_item_type($item);
+        $file["type"] = $file_type;
         $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
         $file["modified_by"] = $item->lastModifiedBy->user->displayName;
 
-        if ($item->folder) {
-            $file["type"] = "folder";
-            $file["size"] = format_folder_size($item->folder->childCount);
-        } else if ($item->file) {
-            $file["type"] = "file";
+        if ($file_type === "folder") {
+            $children = $item->remoteItem ? $item->remoteItem->folder->childCount : $item->folder->childCount;
+            $file["size"] = format_folder_size($children);
+        } else if ($file_type === "file") {
             $file["size"] = format_file_size($item->size);
         }
 

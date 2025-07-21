@@ -59,9 +59,20 @@ function get_drive_item(Krizalys\Onedrive\Client $client, string $path): Krizaly
         return $client->getDriveItemByPath($path);
 }
 
-function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
+function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy|Krizalys\Onedrive\Proxy\RemoteItemProxy $item): string
 {
-    return $item->folder ? "folder" : "file";
+    // Is this a remote/shared item?
+    if (is_a($item, "Krizalys\Onedrive\Proxy\DriveItemProxy") && $item->remoteItem)
+        return get_drive_item_type($item->remoteItem);
+
+    if ($item->folder)
+        return "folder";
+    else if ($item->file)
+        return "file";
+    else {
+        error_log("get_drive_item_type: unknown type of drive item \"{$item->name}\".");
+        return "unknown";
+    }
 }
 
 function build_drive_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string
