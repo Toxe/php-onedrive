@@ -72,15 +72,10 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
 
         if ($item->folder) {
             $file["type"] = "folder";
-
-            $file["size"] = match ($item->folder->childCount) {
-                0 => "empty",
-                1 => "1 File",
-                default => $item->folder->childCount . " Files",
-            };
+            $file["size"] = format_folder_size($item->folder->childCount);
         } else if ($item->file) {
             $file["type"] = "file";
-            $file["size"] = format_size($item->size);
+            $file["size"] = format_file_size($item->size);
         }
 
         $files[] = $file;
@@ -182,7 +177,7 @@ function format_datetime(DateTime $dt): string
     return $dt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i T');
 }
 
-function format_size(int $size): string
+function format_file_size(int $size): string
 {
     $suffixes = [' Bytes', ' KB', ' MB', ' GB', ' TB', ' PB'];
 
@@ -191,4 +186,13 @@ function format_size(int $size): string
 
     $e = (int) floor(log($size, 1024));
     return round($size / pow(1024, $e), 2) . $suffixes[$e];
+}
+
+function format_folder_size(int $children): string
+{
+    return match ($children) {
+        0 => 'empty',
+        1 => '1 File',
+        default => "$children Files",
+    };
 }
