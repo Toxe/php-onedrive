@@ -71,6 +71,10 @@ table.files td.up {
     font-size: 20pt;
 }
 
+table.files .right {
+    text-align: right;
+}
+
 table.files td img {
     height: 2em;
 }

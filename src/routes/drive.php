@@ -67,7 +67,7 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
         $file["url"] = build_drive_item_url($item, $path);
         $file["name"] = $item->name;
         $file["type"] = get_drive_item_type($item);
-        $file["modified"] = $item->lastModifiedDateTime->format(DateTimeInterface::RFC7231);
+        $file["modified_by"] = $item->lastModifiedBy->user->displayName;
 
         if ($item->folder) {
             $file["type"] = "folder";
