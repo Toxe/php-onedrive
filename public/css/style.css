@@ -50,11 +50,11 @@ a {
 }
 
 .request_feedback.success {
-    border: 2px solid green;
+    border: 10px solid #4cd34c;
 }
 
 .request_feedback.failure {
-    border: 2px solid red;
+    border: 10px solid red;
 }
 
 .actions {
