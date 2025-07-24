@@ -11,7 +11,11 @@
     <li><a href="/drive">Drive</a></li>
     {% for bc in breadcrumbs[1:] %}
     <li><img src="/img/right_arrow.svg" /></li>
+    {% if bc.url %}
     <li><a href="{{ bc.url}}">{{ bc.name }}</a></li>
+    {% else %}
+    <li>{{ bc.name }}</li>
+    {% endif %}
     {% endfor %}
 </ul>
 
