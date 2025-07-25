@@ -1,4 +1,11 @@
 <?php
+enum FileType
+{
+    case Unknown;
+    case File;
+    case Folder;
+}
+
 // Initialize a new OneDrive client.
 function init_onedrive_client(): array
 {
@@ -58,19 +65,19 @@ function get_drive_item(Krizalys\Onedrive\Client $client, string $item_id): Kriz
     return $drive->getDriveItemById($item_id);
 }
 
-function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy|Krizalys\Onedrive\Proxy\RemoteItemProxy $item): string
+function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy|Krizalys\Onedrive\Proxy\RemoteItemProxy $item): FileType
 {
     // Is this a remote/shared item?
     if (is_a($item, "Krizalys\Onedrive\Proxy\DriveItemProxy") && $item->remoteItem)
         return get_drive_item_type($item->remoteItem);
 
     if ($item->folder)
-        return "folder";
+        return FileType::Folder;
     else if ($item->file)
-        return "file";
+        return FileType::File;
     else {
         error_log("get_drive_item_type: unknown type of drive item \"{$item->name}\".");
-        return "unknown";
+        return FileType::Unknown;
     }
 }
 
@@ -84,7 +91,7 @@ function get_drive_id_from_item_id(string $item_id): ?string
 
 function build_drive_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
 {
-    if (get_drive_item_type($item) === "file") {
+    if (get_drive_item_type($item) === FileType::File) {
         $name = urlencode($item->name);
         return "/download/{$item->id}/{$name}";
     } else {

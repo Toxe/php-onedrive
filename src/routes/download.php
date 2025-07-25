@@ -10,7 +10,7 @@ function handle_GET_request(): RequestResult
     [$drive_id, $item_id, $filename] = parse_url_path($parts["path"]);
     $item = get_drive_item($client, $item_id);
 
-    if (get_drive_item_type($item) !== "file")
+    if (get_drive_item_type($item) !== FileType::File)
         return Content::error("Unable to download, \"{$item->name}\" is not a file.")->result();
 
     $file_content = $item->download()->getContents();

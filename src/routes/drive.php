@@ -73,18 +73,19 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
         $file["url"] = build_drive_item_url($item);
         $file["name"] = $item->name;
         $file["type"] = $file_type;
-        $file["icon"] = $file_type;
         $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
         $file["modified_by"] = $item->lastModifiedBy->user->displayName;
 
-        if ($file_type === "folder") {
+        if ($file_type === FileType::Folder) {
             $children = $item->remoteItem ? $item->remoteItem->folder->childCount : $item->folder->childCount;
             $file["size"] = format_folder_size($children);
+            $file["icon"] = "folder";
 
             if ($item->remoteItem)
                 $file["icon"] = "link";
-        } else if ($file_type === "file") {
+        } else if ($file_type === FileType::File) {
             $file["size"] = format_file_size($item->size);
+            $file["icon"] = "file";
         }
 
         $files[] = $file;
@@ -143,8 +144,8 @@ function handle_POST_rename_request(Krizalys\Onedrive\Client $client): array
     $item->rename($_POST["new_name"]);
 
     $msg = match (get_drive_item_type($item)) {
-        "file" => "File renamed.",
-        "folder" => "Folder renamed.",
+        FileType::File => "File renamed.",
+        FileType::Folder => "Folder renamed.",
     };
 
     return [true, $msg];
@@ -159,8 +160,8 @@ function handle_POST_delete_request(Krizalys\Onedrive\Client $client): array
     $item->delete();
 
     $msg = match (get_drive_item_type($item)) {
-        "file" => "File deleted.",
-        "folder" => "Folder deleted.",
+        FileType::File => "File deleted.",
+        FileType::Folder => "Folder deleted.",
     };
 
     return [true, $msg];
