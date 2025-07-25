@@ -97,7 +97,7 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
 function collect_breadcrumbs(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
     $breadcrumbs = [];
-    $breadcrumbs[] = ["name" => "Drive", "url" => "/drive"];
+    $breadcrumbs[] = ["name" => "Personal Drive", "url" => "/drive"];
 
     // show the names (without links) of parent folders of a remote folder
     if ($folder->parentReference->path) {
