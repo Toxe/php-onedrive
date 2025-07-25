@@ -7,11 +7,11 @@ function handle_GET_request(): RequestResult
         return RequestResult::redirect("/login");
 
     $parts = parse_url($_SERVER["REQUEST_URI"]);
-    $file_path = get_file_path($parts["path"]);
-    $item = get_drive_item($client, $file_path);
+    [$drive_id, $item_id, $filename] = parse_url_path($parts["path"]);
+    $item = get_drive_item($client, $item_id);
 
     if (get_drive_item_type($item) !== "file")
-        return Content::error("Unable to download, \"$file_path\" is not a file.")->result();
+        return Content::error("Unable to download, \"{$item->name}\" is not a file.")->result();
 
     $file_content = $item->download()->getContents();
 
@@ -20,15 +20,12 @@ function handle_GET_request(): RequestResult
     return RequestResult::download($file_content, $item->file->mimeType, $item->size, $item->name);
 }
 
-function get_file_path(string $url_path): string
+function parse_url_path(string $url_path): array
 {
-    if (!str_starts_with($url_path, "/download"))
-        return '/';
+    $ret = preg_match('/^\/download\/([[:xdigit:]]+)!([[:alnum:]]+)\/(.+)/', $url_path, $matches);
 
-    $path = substr($url_path, strlen("/download"));
+    if (!$ret || count($matches) !== 4)
+        return [null, null];
 
-    if ($path !== '/' && str_ends_with($path, '/'))
-        $path = rtrim($path, '/');
-
-    return $path === '' ? '/' : $path;
+    return [$matches[1], "$matches[1]!$matches[2]", $matches[3]];
 }

@@ -7,9 +7,7 @@ function handle_GET_request(): RequestResult
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");
 
-    [$path, $folder] = start_request_handling($client);
-
-    return finish_request_handling($client, $folder, $path)->result();
+    return display_drive_content($client, get_folder_from_url($client))->result();
 }
 
 function handle_POST_request(): RequestResult
@@ -19,7 +17,7 @@ function handle_POST_request(): RequestResult
     if (!($client = restore_onedrive_client_from_session()))
         return RequestResult::redirect("/login");
 
-    [$path, $folder] = start_request_handling($client);
+    $folder = get_folder_from_url($client);
 
     // handle form request
     $request_feedback = match ($_POST["action"]) {
@@ -29,22 +27,24 @@ function handle_POST_request(): RequestResult
         "new_folder" => handle_POST_new_folder_request($folder),
     };
 
-    return finish_request_handling($client, $folder, $path, $request_feedback)->result();
+    return display_drive_content($client, $folder, $request_feedback)->result();
 }
 
-function start_request_handling(Krizalys\Onedrive\Client $client): array
+function get_folder_from_url(Krizalys\Onedrive\Client $client): Krizalys\Onedrive\Proxy\DriveItemProxy
 {
     $parts = parse_url($_SERVER["REQUEST_URI"]);
-    $path = get_drive_path($parts["path"]);
-    $folder = get_drive_item($client, $path);
+    [$drive_id, $item_id] = parse_url_path($parts["path"]);
 
-    return [$path, $folder];
+    if (empty($item_id))
+        return $client->getRoot();
+    else
+        return get_drive_item($client, $item_id);
 }
 
-function finish_request_handling(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path, ?array $request_feedback = null): Content
+function display_drive_content(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder, ?array $request_feedback = null): Content
 {
-    $files = collect_files($folder, $path);
-    $breadcrumbs = collect_breadcrumbs($path);
+    $files = collect_files($client, $folder);
+    $breadcrumbs = collect_breadcrumbs($folder);
 
     save_onedrive_client_state_to_session($client);
 
@@ -57,16 +57,19 @@ function finish_request_handling(Krizalys\Onedrive\Client $client, Krizalys\Oned
     );
 }
 
-function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $path): array
+function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
     $files = [];
+
+    if ($folder->remoteItem)
+        $folder = get_drive_item($client, $folder->remoteItem->id);
 
     foreach ($folder->getChildren() as $item) {
         $file_type = get_drive_item_type($item);
 
         $file = [];
         $file["id"] = $item->id;
-        $file["url"] = build_drive_item_url($item, $path);
+        $file["url"] = build_drive_item_url($item);
         $file["name"] = $item->name;
         $file["type"] = $file_type;
         $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
@@ -85,37 +88,45 @@ function collect_files(Krizalys\Onedrive\Proxy\DriveItemProxy $folder, string $p
     return $files;
 }
 
-function collect_breadcrumbs(string $path): array
+function collect_breadcrumbs(Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
-    if ($path === '/')
-        return [["name" => "Drive", "url" => "/drive"]];
-
-    $parts = explode('/', $path);
-    array_shift($parts);
-
-    $url = "/drive";
     $breadcrumbs = [];
-    $breadcrumbs[] = ["name" => "Drive", "url" => $url];
+    $breadcrumbs[] = ["name" => "Drive", "url" => "/drive"];
 
-    foreach ($parts as $name) {
-        $url .= "/$name";
-        $breadcrumbs[] = ["name" => urldecode($name), "url" => $url];
+    // show the names (without links) of parent folders of a remote folder
+    if ($folder->parentReference->path) {
+        $ret = preg_match('/^\/drives\/([[:xdigit:]]+)\/root:(.+)/', $folder->parentReference->path, $matches);
+
+        if ($ret && count($matches) === 3) {
+            $parts = explode('/', $matches[2]);
+            array_shift($parts);  // first element is empty
+
+            foreach ($parts as $name)
+                $breadcrumbs[] = ["name" => urldecode($name), "url" => null];
+        }
+    }
+
+    // URLs to parent and current folders (unless this is the root folder)
+    if (!$folder->root) {
+        $last = count($breadcrumbs) - 1;
+
+        if ($last > 0)
+            $breadcrumbs[$last]["url"] = "/drive/{$folder->parentReference->id}";
+
+        $breadcrumbs[] = ["name" => urldecode($folder->name), "url" => build_drive_item_url($folder)];
     }
 
     return $breadcrumbs;
 }
 
-function get_drive_path(string $url_path): string
+function parse_url_path(string $url_path): array
 {
-    if (!str_starts_with($url_path, "/drive"))
-        return '/';
+    $ret = preg_match('/^\/drive\/([[:xdigit:]]+)!([[:alnum:]]+)/', $url_path, $matches);
 
-    $path = substr($url_path, strlen("/drive"));
+    if (!$ret || count($matches) !== 3)
+        return [null, null];
 
-    if ($path !== '/' && str_ends_with($path, '/'))
-        $path = rtrim($path, '/');
-
-    return $path === '' ? '/' : $path;
+    return [$matches[1], "$matches[1]!$matches[2]"];
 }
 
 function handle_POST_rename_request(Krizalys\Onedrive\Client $client): array

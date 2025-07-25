@@ -51,12 +51,11 @@ function is_logged_in_to_onedrive(): bool
     return array_key_exists('onedrive.client.state', $_SESSION);
 }
 
-function get_drive_item(Krizalys\Onedrive\Client $client, string $path): Krizalys\Onedrive\Proxy\DriveItemProxy
+function get_drive_item(Krizalys\Onedrive\Client $client, string $item_id): Krizalys\Onedrive\Proxy\DriveItemProxy
 {
-    if ($path === '/')
-        return $client->getRoot();
-    else
-        return $client->getDriveItemByPath($path);
+    $drive_id = get_drive_id_from_item_id($item_id);
+    $drive = $client->getDriveById($drive_id);
+    return $drive->getDriveItemById($item_id);
 }
 
 function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy|Krizalys\Onedrive\Proxy\RemoteItemProxy $item): string
@@ -75,10 +74,20 @@ function get_drive_item_type(Krizalys\Onedrive\Proxy\DriveItemProxy|Krizalys\One
     }
 }
 
-function build_drive_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $path): string
+function get_drive_id_from_item_id(string $item_id): ?string
 {
-    $type = get_drive_item_type($item);
-    $prefix = $type === "file" ? "download" : "drive";
-    $slash = $path === '/' ? '' : '/';
-    return "/{$prefix}{$path}{$slash}{$item->name}";
+    if (($pos = strpos($item_id, "!")) === false)
+        return null;
+
+    return substr($item_id, 0, $pos);
+}
+
+function build_drive_item_url(Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
+{
+    if (get_drive_item_type($item) === "file") {
+        $name = urlencode($item->name);
+        return "/download/{$item->id}/{$name}";
+    } else {
+        return "/drive/{$item->id}";
+    }
 }
