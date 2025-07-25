@@ -73,12 +73,16 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
         $file["url"] = build_drive_item_url($item);
         $file["name"] = $item->name;
         $file["type"] = $file_type;
+        $file["icon"] = $file_type;
         $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
         $file["modified_by"] = $item->lastModifiedBy->user->displayName;
 
         if ($file_type === "folder") {
             $children = $item->remoteItem ? $item->remoteItem->folder->childCount : $item->folder->childCount;
             $file["size"] = format_folder_size($children);
+
+            if ($item->remoteItem)
+                $file["icon"] = "link";
         } else if ($file_type === "file") {
             $file["size"] = format_file_size($item->size);
         }
