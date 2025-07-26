@@ -83,12 +83,16 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
             $children = $item->remoteItem ? $item->remoteItem->folder->childCount : $item->folder->childCount;
             $file["size"] = format_folder_size($children);
             $file["icon"] = "folder";
+            $file["type_description"] = "Drive Folder";
 
-            if ($item->remoteItem)
+            if ($item->remoteItem) {
                 $file["icon"] = "link";
+                $file["type_description"] = "Linked Shared Folder";
+            }
         } else if ($file_type === FileType::File) {
             $file["size"] = format_file_size($item->size);
             $file["icon"] = "file";
+            $file["type_description"] = "Drive File";
         }
 
         if ($item->shared) {

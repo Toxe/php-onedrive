@@ -40,7 +40,7 @@
         {% endif %}
         {% for file in files %}
         <tr>
-            <td><a href="{{ file.url }}"><img src="/img/{{ file.icon }}.svg" /></a></td>
+            <td><a href="{{ file.url }}"><img src="/img/{{ file.icon }}.svg" alt="{{ file.type_description }}" title="{{ file.type_description }}" /></a></td>
             <td><a href="{{ file.url }}">{{ file.name }}</a></td>
             <td class="right">{{ file.size }}</td>
             <td class="right">{{ file.modified_date }}</td>
