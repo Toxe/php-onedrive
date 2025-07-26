@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 function format_datetime(DateTime $dt): string
 {
     return $dt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i T');
