@@ -47,7 +47,7 @@
             <td>
                 {% set item_type = file.type == enum("FileType").Folder ? "folder" : "file" %}
                 <button onclick="show_rename_dialog('{{ file.id }}', '{{ file.name }}')">Rename</button>
-                <button onclick="show_delete_dialog('{{ file.id }}', '{{ file.name }}', '{{ itebutton}}')">Delete</button>
+                <button onclick="show_delete_dialog('{{ file.id }}', '{{ file.name }}', '{{ item_type }}')">Delete</button>
             </td>
         </tr>
         {% else %}
