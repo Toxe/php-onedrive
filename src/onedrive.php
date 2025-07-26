@@ -28,7 +28,7 @@ function obtain_onedrive_access_token(Krizalys\Onedrive\Client $client, string $
 {
     $config = load_config();
 
-    $client->obtainAccessToken($config['ONEDRIVE_CLIENT_SECRET'], $_GET['code']);
+    $client->obtainAccessToken($config['ONEDRIVE_CLIENT_SECRET'], $code);
 }
 
 function save_onedrive_user_info_to_session(Krizalys\Onedrive\Client $client): void
