@@ -60,7 +60,6 @@ function display_drive_content(Krizalys\Onedrive\Client $client, Krizalys\Onedri
 
 function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
-    $my_name = $client->getMyDrive()->owner->user->displayName;
     $files = [];
 
     if ($folder->remoteItem)
@@ -96,7 +95,7 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
         }
 
         if ($item->shared) {
-            if ($item->shared->owner->user->displayName == $my_name) {
+            if ($item->shared->owner->user->displayName == $_SESSION["my_name"]) {
                 $file["sharing"] = "shared by you";
                 $file["sharing_type"] = "sharing_by_me";
             } else {

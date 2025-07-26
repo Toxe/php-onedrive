@@ -31,6 +31,14 @@ function obtain_onedrive_access_token(Krizalys\Onedrive\Client $client, string $
     $client->obtainAccessToken($config['ONEDRIVE_CLIENT_SECRET'], $_GET['code']);
 }
 
+function save_onedrive_user_info_to_session(Krizalys\Onedrive\Client $client): void
+{
+    assert(is_session_active());
+
+    // save the name of the logged-in user in the session
+    $_SESSION["my_name"] = $client->getMyDrive()->owner->user->displayName;
+}
+
 // Persist OneDrive client state in the session for next API requests.
 function save_onedrive_client_state_to_session(Krizalys\Onedrive\Client $client): void
 {

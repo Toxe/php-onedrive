@@ -12,6 +12,7 @@ function handle_GET_request(): RequestResult
         return Content::error("Authorization failed: Unable to restore client state.")->result();
 
     obtain_onedrive_access_token($client, $_GET['code']);
+    save_onedrive_user_info_to_session($client);
     save_onedrive_client_state_to_session($client);
 
     return RequestResult::redirect("/drive");  // redirect to /drive
