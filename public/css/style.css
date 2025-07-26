@@ -79,6 +79,20 @@ table.files td img {
     height: 2em;
 }
 
+table.files td.sharing_private {
+    color: lightgray;
+}
+
+table.files td.sharing_by_me {
+    font-weight: bold;
+    color: blue;
+}
+
+table.files td.sharing_by_other {
+    font-weight: bold;
+    color: green;
+}
+
 ul.breadcrumbs {
     list-style: none;
     overflow: hidden;

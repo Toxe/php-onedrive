@@ -60,6 +60,7 @@ function display_drive_content(Krizalys\Onedrive\Client $client, Krizalys\Onedri
 
 function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
+    $my_name = $client->getMyDrive()->owner->user->displayName;
     $files = [];
 
     if ($folder->remoteItem)
@@ -75,6 +76,8 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
         $file["type"] = $file_type;
         $file["modified_date"] = format_datetime($item->lastModifiedDateTime);
         $file["modified_by"] = $item->lastModifiedBy->user->displayName;
+        $file["sharing"] = "private";
+        $file["sharing_type"] = "sharing_private";
 
         if ($file_type === FileType::Folder) {
             $children = $item->remoteItem ? $item->remoteItem->folder->childCount : $item->folder->childCount;
@@ -86,6 +89,16 @@ function collect_files(Krizalys\Onedrive\Client $client, Krizalys\Onedrive\Proxy
         } else if ($file_type === FileType::File) {
             $file["size"] = format_file_size($item->size);
             $file["icon"] = "file";
+        }
+
+        if ($item->shared) {
+            if ($item->shared->owner->user->displayName == $my_name) {
+                $file["sharing"] = "shared by you";
+                $file["sharing_type"] = "sharing_by_me";
+            } else {
+                $file["sharing"] = "shared by " . $item->shared->owner->user->displayName;
+                $file["sharing_type"] = "sharing_by_other";
+            }
         }
 
         $files[] = $file;
