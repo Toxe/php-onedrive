@@ -7,14 +7,14 @@
 {% endif %}
 
 <ul class="breadcrumbs">
-    <li><a href="/drive"><img src="/img/home.svg" /></a></li>
     {% for bc in breadcrumbs %}
     {% if bc.url %}
+    <li><a href="{{ bc.url }}"><img src="/img/{{ bc.icon }}.svg" /></a></li>
     <li><a href="{{ bc.url }}">{{ bc.name }}</a></li>
     {% else %}
+    <li><img src="/img/{{ bc.icon }}.svg" /></li>
     <li>{{ bc.name }}</li>
     {% endif %}
-    {% if not loop.last %}<li><img src="/img/right_arrow.svg" /></li>{% endif %}
     {% endfor %}
 </ul>
 

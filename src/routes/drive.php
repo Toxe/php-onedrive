@@ -117,7 +117,7 @@ function collect_files(\Krizalys\Onedrive\Client $client, \Krizalys\Onedrive\Pro
 function collect_breadcrumbs(\Krizalys\Onedrive\Proxy\DriveItemProxy $folder): array
 {
     $breadcrumbs = [];
-    $breadcrumbs[] = ["name" => "Personal Drive", "url" => "/drive"];
+    $breadcrumbs[] = ["name" => "Personal Drive", "url" => "/drive", "icon" => "home"];
 
     // show the names (without links) of parent folders of a remote folder
     if ($folder->parentReference->path) {
@@ -128,7 +128,7 @@ function collect_breadcrumbs(\Krizalys\Onedrive\Proxy\DriveItemProxy $folder): a
             array_shift($parts);  // first element is empty
 
             foreach ($parts as $name)
-                $breadcrumbs[] = ["name" => urldecode($name), "url" => null];
+                $breadcrumbs[] = ["name" => urldecode($name), "url" => null, "icon" => "right_arrow"];
         }
     }
 
@@ -139,7 +139,7 @@ function collect_breadcrumbs(\Krizalys\Onedrive\Proxy\DriveItemProxy $folder): a
         if ($last > 0)
             $breadcrumbs[$last]["url"] = "/drive/{$folder->parentReference->id}";
 
-        $breadcrumbs[] = ["name" => urldecode($folder->name), "url" => \PHPOneDrive\build_drive_item_url($folder)];
+        $breadcrumbs[] = ["name" => urldecode($folder->name), "url" => \PHPOneDrive\build_drive_item_url($folder), "icon" => "right_arrow"];
     }
 
     return $breadcrumbs;
