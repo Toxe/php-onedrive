@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-function handle_GET_request(): RequestResult
-{
-    destroy_session();
+namespace PHPOneDrive\Route;
 
-    return Content::success("Logged out.")->result();
+function handle_GET_request(): \PHPOneDrive\RequestResult
+{
+    \PHPOneDrive\destroy_session();
+
+    return \PHPOneDrive\Content::success("Logged out.")->result();
 }

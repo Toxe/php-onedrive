@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace PHPOneDrive;
+
 function use_template(string $template, array $values = []): string
 {
     static $twig = null;

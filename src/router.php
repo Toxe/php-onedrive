@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace PHPOneDrive;
+
 require_once(__DIR__ . '/request_result.php');
 
 function route(): RequestResult
@@ -9,7 +11,8 @@ function route(): RequestResult
     $path_prefix = get_route_path_prefix($parts["path"]);
 
     $route = match ($path_prefix) {
-        "/", "/drive", "/index" => "drive.php",
+        "/drive", "/", "/index" => "drive.php",
+        "/shared" => "shared.php",
         "/download" => "download.php",
         "/auth" => "auth.php",
         "/login" => "login.php",
@@ -23,7 +26,7 @@ function route(): RequestResult
     require(__DIR__ . "/routes/$route");
 
     $request_method = $_SERVER["REQUEST_METHOD"];
-    $request_handler = "handle_{$request_method}_request";
+    $request_handler = "PHPOneDrive\\Route\\handle_{$request_method}_request";
 
     if (!function_exists($request_handler))
         return Content::error("Router error: Request handler not found for $request_method \"$parts[path]\".")->result();
@@ -31,7 +34,7 @@ function route(): RequestResult
     try {
         return $request_handler();
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
         error_log($e->getMessage());
         return Content::error(str_replace("\\n", "\n", $e->getMessage()))->result();
     }

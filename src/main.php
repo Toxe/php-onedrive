@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace PHPOneDrive;
+
 require(__DIR__ . '/router.php');
 
 function main(): void

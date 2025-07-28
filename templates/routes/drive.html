@@ -47,7 +47,7 @@
             <td>{{ file.modified_by }}</td>
             <td class="sharing {{ file.sharing_type }}">{{ file.sharing }}</td>
             <td>
-                {% set item_type = file.type == enum("FileType").Folder ? "folder" : "file" %}
+                {% set item_type = file.type == enum("\\PHPOneDrive\\FileType").Folder ? "folder" : "file" %}
                 <button onclick="show_rename_dialog('{{ file.id }}', '{{ file.name }}')">Rename</button>
                 <button onclick="show_delete_dialog('{{ file.id }}', '{{ file.name }}', '{{ item_type }}')">Delete</button>
             </td>

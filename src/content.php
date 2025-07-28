@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+namespace PHPOneDrive;
+
 require_once(__DIR__ . '/request_result.php');
 require_once(__DIR__ . '/onedrive.php');
 

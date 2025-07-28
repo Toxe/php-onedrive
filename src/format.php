@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-function format_datetime(DateTime $dt): string
+namespace PHPOneDrive;
+
+function format_datetime(\DateTime $dt): string
 {
-    return $dt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i T');
+    return $dt->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i T');
 }
 
 function format_file_size(int $size): string
