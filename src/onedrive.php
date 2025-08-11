@@ -101,12 +101,12 @@ function get_drive_id_from_item_id(string $item_id): ?string
     return substr($item_id, 0, $pos);
 }
 
-function build_drive_item_url(\Krizalys\Onedrive\Proxy\DriveItemProxy $item): string
+function build_drive_item_url(\Krizalys\Onedrive\Proxy\DriveItemProxy $item, string $prefix = "drive"): string
 {
     if (get_drive_item_type($item) === FileType::File) {
         $name = urlencode($item->name);
         return "/download/{$item->id}/{$name}";
     } else {
-        return "/drive/{$item->id}";
+        return "/{$prefix}/{$item->id}";
     }
 }
