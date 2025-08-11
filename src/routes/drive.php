@@ -66,6 +66,7 @@ function collect_files(\Krizalys\Onedrive\Client $client, \Krizalys\Onedrive\Pro
 {
     $files = [];
 
+    // Is this a linked shared folder?
     if ($folder->remoteItem)
         $folder = \PHPOneDrive\get_drive_item($client, $folder->remoteItem->id);
 
@@ -100,7 +101,7 @@ function collect_files(\Krizalys\Onedrive\Client $client, \Krizalys\Onedrive\Pro
 
         if ($item->shared) {
             if ($item->shared->owner->user->displayName == $_SESSION["my_name"]) {
-                $file["sharing"] = "shared by you";
+                $file["sharing"] = "shared by You";
                 $file["sharing_type"] = "sharing_by_me";
             } else {
                 $file["sharing"] = "shared by " . $item->shared->owner->user->displayName;
