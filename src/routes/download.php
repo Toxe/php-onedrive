@@ -5,12 +5,12 @@ namespace PHPOneDrive\Route;
 
 require_once(__DIR__ . "/../onedrive.php");
 
-function handle_GET_request(): \PHPOneDrive\RequestResult
+function handle_GET_request(string $request_uri): \PHPOneDrive\RequestResult
 {
     if (!($client = \PHPOneDrive\restore_onedrive_client_from_session()))
         return \PHPOneDrive\RequestResult::redirect("/login");
 
-    $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $parts = parse_url($request_uri);
     [$drive_id, $item_id, $filename] = parse_url_path($parts["path"]);
     $item = \PHPOneDrive\get_drive_item($client, $item_id);
 

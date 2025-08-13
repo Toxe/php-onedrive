@@ -5,9 +5,9 @@ namespace PHPOneDrive;
 
 require_once(__DIR__ . '/request_result.php');
 
-function route(): RequestResult
+function route(string $request_uri, string $request_method): RequestResult
 {
-    $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $parts = parse_url($request_uri);
     $path_prefix = get_route_path_prefix($parts["path"]);
 
     $route = match ($path_prefix) {
@@ -25,14 +25,13 @@ function route(): RequestResult
 
     require(__DIR__ . "/routes/$route");
 
-    $request_method = $_SERVER["REQUEST_METHOD"];
     $request_handler = "PHPOneDrive\\Route\\handle_{$request_method}_request";
 
     if (!function_exists($request_handler))
         return Content::error("Router error: Request handler not found for $request_method \"$parts[path]\".")->result();
 
     try {
-        return $request_handler();
+        return $request_handler($request_uri);
     }
     catch (\Exception $e) {
         error_log($e->getMessage());

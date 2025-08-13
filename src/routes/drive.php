@@ -7,22 +7,22 @@ require_once(__DIR__ . "/../format.php");
 require_once(__DIR__ . "/../onedrive.php");
 require_once(__DIR__ . "/../template.php");
 
-function handle_GET_request(): \PHPOneDrive\RequestResult
+function handle_GET_request(string $request_uri): \PHPOneDrive\RequestResult
 {
     if (!($client = \PHPOneDrive\restore_onedrive_client_from_session()))
         return \PHPOneDrive\RequestResult::redirect("/login");
 
-    return display_drive_content($client, get_folder_from_url($client))->result();
+    return display_drive_content($client, get_folder_from_url($client, $request_uri))->result();
 }
 
-function handle_POST_request(): \PHPOneDrive\RequestResult
+function handle_POST_request(string $request_uri): \PHPOneDrive\RequestResult
 {
     assert(isset($_POST["action"]));
 
     if (!($client = \PHPOneDrive\restore_onedrive_client_from_session()))
         return \PHPOneDrive\RequestResult::redirect("/login");
 
-    $folder = get_folder_from_url($client);
+    $folder = get_folder_from_url($client, $request_uri);
 
     // handle form request
     $request_feedback = match ($_POST["action"]) {
@@ -35,9 +35,9 @@ function handle_POST_request(): \PHPOneDrive\RequestResult
     return display_drive_content($client, $folder, $request_feedback)->result();
 }
 
-function get_folder_from_url(\Krizalys\Onedrive\Client $client): \Krizalys\Onedrive\Proxy\DriveItemProxy
+function get_folder_from_url(\Krizalys\Onedrive\Client $client, string $request_uri): \Krizalys\Onedrive\Proxy\DriveItemProxy
 {
-    $parts = parse_url($_SERVER["REQUEST_URI"]);
+    $parts = parse_url($request_uri);
     [$drive_id, $item_id] = parse_url_path($parts["path"]);
 
     if (empty($item_id))

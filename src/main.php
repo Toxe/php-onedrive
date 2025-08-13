@@ -8,7 +8,7 @@ require(__DIR__ . '/router.php');
 function main(): void
 {
     start_session();
-    route()->output();
+    route($_SERVER["REQUEST_URI"], $_SERVER["REQUEST_METHOD"])->output();
 }
 
 function load_config(): array

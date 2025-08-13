@@ -5,7 +5,7 @@ namespace PHPOneDrive\Route;
 
 require_once(__DIR__ . "/../onedrive.php");
 
-function handle_GET_request(): \PHPOneDrive\RequestResult
+function handle_GET_request(string $request_uri): \PHPOneDrive\RequestResult
 {
     // If we don't have a code in the query string (meaning that the user did not log in successfully
     // or did not grant privileges requested), we cannot proceed in obtaining an access token.
